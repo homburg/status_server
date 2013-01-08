@@ -9,6 +9,8 @@ import (
 	"fmt"
 	"strings"
 	"io/ioutil"
+	"path/filepath"
+	"os"
 )
 
 const listenAddr = ":8086"
@@ -63,7 +65,10 @@ func main () {
 
 	accessControlMatch = regexp.MustCompile(`^192\.168\.0\.`);
 
-	html, err := ioutil.ReadFile("/home/thomas/workspace/go/server.template.html")
+	exe,_ := filepath.Abs(os.Getenv("_"))
+	exePath := filepath.Dir(exe)
+
+	html, err := ioutil.ReadFile(filepath.Join(exePath, "server.template.html"))
 
 	if nil != err {
 		log.Println(err)
