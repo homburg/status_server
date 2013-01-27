@@ -8,10 +8,11 @@ import (
 	"regexp"
 	"fmt"
 	"strings"
-	"path/filepath"
+	// "path/filepath"
 	"os"
 	"bytes"
 	"html/template"
+	"homburg/status_server/res"
 )
 
 const listenAddr = ":8086"
@@ -66,11 +67,13 @@ func main () {
 
 	accessControlMatch = regexp.MustCompile(`^192\.168\.0\.`);
 
-	exe,_ := filepath.Abs(os.Getenv("_"))
-	exePath := filepath.Dir(exe)
+	// exe,_ := filepath.Abs(os.Getenv("_"))
+	// exePath := filepath.Dir(exe)
 
 	// html, err := ioutil.ReadFile(filepath.Join(exePath, "server.template.html"))
-	tmpl := template.Must(template.ParseFiles(filepath.Join(exePath, "server.template.html")))
+	tmpl := template.New("server")
+	template.Must(tmpl.Parse(status_server.ServerTemplate))
+
 	var buf bytes.Buffer
 	hostname, _ := os.Hostname()
 	err := tmpl.Execute(&buf, hostname)

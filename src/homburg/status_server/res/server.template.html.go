@@ -1,4 +1,6 @@
-<!DOCTYPE HTML>
+package status_server
+
+const ServerTemplate = `<!DOCTYPE HTML>
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -42,4 +44,4 @@
 			// setTimeout(function () {window.location.reload();}, 20000);
 	</script>
 </body>
-</html>
+</html>`
