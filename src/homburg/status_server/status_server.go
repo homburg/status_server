@@ -1,27 +1,27 @@
 package main
 
 import (
-	"os/exec"
+	"fmt"
 	"log"
 	"net/http"
 	"net/url"
+	"os/exec"
 	"regexp"
-	"fmt"
 	"strings"
 	// "path/filepath"
-	"os"
 	"bytes"
-	"html/template"
 	"homburg/status_server/res"
+	"html/template"
+	"os"
 )
 
 const listenAddr = ":8086"
 
 // Restrict access to lan ip addresses
-func accessControl (w http.ResponseWriter, r *http.Request) bool {
+func accessControl(w http.ResponseWriter, r *http.Request) bool {
 	remoteAddr := getRemoteAddr(r)
 	if !accessControlMatch.MatchString(remoteAddr) {
-		log.Println("Reject: "+string(remoteAddr))
+		log.Println("Reject: " + string(remoteAddr))
 		w.WriteHeader(http.StatusNotFound)
 		return false
 	}
@@ -41,14 +41,14 @@ func getRemoteAddr(r *http.Request) string {
 }
 
 // Convert newlines to <br>
-func newlineToHtmlBreak (s string) string {
+func newlineToHtmlBreak(s string) string {
 	return strings.Replace(s, "\n", "<br>", -1)
 }
 
 // Run command and return html
-func commandToHtml (firstCmd string, cmdSegments ...string) (string, error) {
+func commandToHtml(firstCmd string, cmdSegments ...string) (string, error) {
 	cmd := exec.Command(firstCmd, cmdSegments...)
-	out, err := cmd.Output();
+	out, err := cmd.Output()
 	if nil != err {
 		return "", err
 	}
@@ -60,12 +60,12 @@ func commandToHtml (firstCmd string, cmdSegments ...string) (string, error) {
 var dropboxCommandMatch *regexp.Regexp
 var accessControlMatch *regexp.Regexp
 
-func main () {
+func main() {
 	// Dropbox handler dependencies
 	dropboxCommandMatch = regexp.MustCompile("/dropbox/(.*)")
 	dropboxAllowedCommands := []string{"status", "help", "ls", "filestatus", "puburl"}
 
-	accessControlMatch = regexp.MustCompile(`^192\.168\.0\.`);
+	accessControlMatch = regexp.MustCompile(`^192\.168\.0\.`)
 
 	// exe,_ := filepath.Abs(os.Getenv("_"))
 	// exePath := filepath.Dir(exe)
@@ -108,10 +108,10 @@ func main () {
 		} else {
 			allowedCommand := false
 			for _, str := range dropboxAllowedCommands {
-					if str == command {
-						allowedCommand = true
-						break
-					}
+				if str == command {
+					allowedCommand = true
+					break
+				}
 			}
 
 			if !allowedCommand {
@@ -145,7 +145,7 @@ func main () {
 		fmt.Fprintln(w, outStr)
 	})
 
-	http.HandleFunc("/", func (w http.ResponseWriter, r *http.Request) {
+	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
 		if "/" != r.URL.String() {
 			w.WriteHeader(http.StatusNotFound)
