@@ -8,7 +8,6 @@ import (
 	"os/exec"
 	"regexp"
 	"strings"
-	// "path/filepath"
 	"bytes"
 	"homburg/status_server/res"
 	"html/template"
@@ -17,15 +16,8 @@ import (
 
 const listenAddr = ":8086"
 
-// Restrict access to lan ip addresses
+// All access control handled by nginx
 func accessControl(w http.ResponseWriter, r *http.Request) bool {
-	remoteAddr := getRemoteAddr(r)
-	if !accessControlMatch.MatchString(remoteAddr) {
-		log.Println("Reject: " + string(remoteAddr))
-		w.WriteHeader(http.StatusNotFound)
-		return false
-	}
-
 	return true
 }
 
@@ -58,19 +50,12 @@ func commandToHtml(firstCmd string, cmdSegments ...string) (string, error) {
 }
 
 var dropboxCommandMatch *regexp.Regexp
-var accessControlMatch *regexp.Regexp
 
 func main() {
 	// Dropbox handler dependencies
 	dropboxCommandMatch = regexp.MustCompile("/dropbox/(.*)")
 	dropboxAllowedCommands := []string{"status", "help", "ls", "filestatus", "puburl"}
 
-	accessControlMatch = regexp.MustCompile(`^192\.168\.0\.`)
-
-	// exe,_ := filepath.Abs(os.Getenv("_"))
-	// exePath := filepath.Dir(exe)
-
-	// html, err := ioutil.ReadFile(filepath.Join(exePath, "server.template.html"))
 	tmpl := template.New("server")
 	template.Must(tmpl.Parse(status_server.ServerTemplate))
 
