@@ -16,6 +16,13 @@ const ServerTemplate = `<!DOCTYPE HTML>
 <body>
 	<div><h1>{{.}}</h1></div>
 
+	<div>
+		<h2>pigen.dk</h2>
+		<form action="" method="post" id="server-sickbeard-restart">
+			<input type="submit" class="btn" value="Genstart SickBeard" />
+		</form>
+	</div>
+
 	<script type="text/javascript">
 		var checks = {
 				dropbox: ["/dropbox/status", "dropbox status", 2000, "span6"],
@@ -25,6 +32,26 @@ const ServerTemplate = `<!DOCTYPE HTML>
 		};
 
 		$(function () {
+
+			var $form = $("form#server-sickbeard-restart"),
+				$button = $form.find("input:submit");
+
+			// Handle form submit
+			$form.submit(function (e) {
+
+				$button.removeClass("btn-inverse");
+				$button.addClass("disabled");
+				$button.attr("disabled", "disabled");
+
+				$.post("/action", {action: "server-sickbeard-restart"}).always(function () {
+					$button.removeClass("disabled");
+					$button.removeAttr("disabled");
+					$button.addClass("btn-inverse");
+				});
+				e.preventDefault()
+				return false;
+			});
+
 				var $body = $(document.body),
 					pre, data;
 

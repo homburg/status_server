@@ -145,6 +145,26 @@ func main() {
 		fmt.Fprintln(w, outStr)
 	})
 
+	// post actions
+	http.HandleFunc("/action", func(w http.ResponseWriter, r *http.Request) {
+		if !accessControl(w, r) {
+			return
+		}
+
+		if r.Method == "POST" {
+			action := r.FormValue("action");
+
+			if action == "server-sickbeard-restart" {
+				cmd := exec.Command("sudo", "-u", "root", "/home/thomas/bin/service_sickbeard_restart.sh")
+				out, err := cmd.Output()
+				if nil != err {
+					log.Fatal(err)
+				}
+				fmt.Fprint(w, string(out))
+			}
+		}
+	})
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 
 		if "/" != r.URL.String() {
