@@ -38,8 +38,8 @@ func newlineToHtmlBreak(s string) string {
 }
 
 // Run command and return html
-func commandToHtml(firstCmd string, cmdSegments ...string) (string, error) {
-	cmd := exec.Command(firstCmd, cmdSegments...)
+func commandToHtml(cmds []string) (string, error) {
+	cmd := exec.Command(cmds[0], cmds[1:]...)
 	out, err := cmd.Output()
 	if nil != err {
 		return "", err
@@ -54,7 +54,7 @@ var dropboxCommandMatch *regexp.Regexp
 func main() {
 	// Dropbox handler dependencies
 	dropboxCommandMatch = regexp.MustCompile("/dropbox/(.*)")
-	dropboxAllowedCommands := []string{"status", "help", "ls", "filestatus", "puburl"}
+	dropboxAllowedCommands := []string{"status", "help", "start"}
 
 	tmpl := template.New("server")
 	template.Must(tmpl.Parse(status_server.ServerTemplate))
@@ -105,8 +105,13 @@ func main() {
 			}
 		}
 
-		outStr, _ := commandToHtml("dropbox", args...)
-		// outStr := commandToHtml("dropbox", args...)
+		cmdWithArgs := []string{"sudo", "-u", "thomas", "dropbox"}
+
+		for _, a := range args {
+			cmdWithArgs = append(cmdWithArgs, a)
+		}
+
+		outStr, _ := commandToHtml(cmdWithArgs)
 		fmt.Fprintln(w, outStr)
 	})
 
@@ -116,7 +121,7 @@ func main() {
 			return
 		}
 
-		outStr, _ := commandToHtml("landscape-sysinfo")
+		outStr, _ := commandToHtml([]string{"landscape-sysinfo"})
 		fmt.Fprintln(w, outStr)
 	})
 
@@ -126,7 +131,7 @@ func main() {
 			return
 		}
 
-		outStr, _ := commandToHtml("dstat", "1", "7")
+		outStr, _ := commandToHtml([]string{"dstat", "1", "7"})
 		fmt.Fprintln(w, outStr)
 	})
 
@@ -143,9 +148,10 @@ func main() {
 				cmd := exec.Command("sudo", "-u", "root", "/home/thomas/bin/service_sickbeard_restart.sh")
 				out, err := cmd.Output()
 				if nil != err {
-					log.Fatal(err)
+					fmt.Fprint(w, err.Error())
+				} else {
+					fmt.Fprint(w, string(out))
 				}
-				fmt.Fprint(w, string(out))
 			}
 		}
 	})
