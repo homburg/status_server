@@ -1,17 +1,17 @@
 package main
 
 import (
+	"bytes"
 	"fmt"
+	"homburg/status_server/res"
+	"html/template"
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"os/exec"
 	"regexp"
 	"strings"
-	"bytes"
-	"homburg/status_server/res"
-	"html/template"
-	"os"
 )
 
 const listenAddr = ":8086"
@@ -142,7 +142,7 @@ func main() {
 		}
 
 		if r.Method == "POST" {
-			action := r.FormValue("action");
+			action := r.FormValue("action")
 
 			if action == "server-sickbeard-restart" {
 				cmd := exec.Command("sudo", "-u", "root", "/home/thomas/bin/service_sickbeard_restart.sh")
