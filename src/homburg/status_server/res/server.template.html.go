@@ -14,7 +14,10 @@ const ServerTemplate = `<!DOCTYPE HTML>
 	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
 </head>
 <body>
-	<div><h1>{{.}}</h1></div>
+	<div>
+		<h1>{{.Hostname}}</h1>
+		<p class="muted">{{.GoVersion}}</p>
+	</div>
 
 	<div>
 		<h2>pigen.dk</h2>

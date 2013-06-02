@@ -11,6 +11,7 @@ import (
 	"os"
 	"os/exec"
 	"regexp"
+	"runtime"
 	"strings"
 )
 
@@ -49,6 +50,11 @@ func commandToHtml(cmds []string) (string, error) {
 	return outStr, nil
 }
 
+type templateDate struct {
+	Hostname  string
+	GoVersion string
+}
+
 var dropboxCommandMatch *regexp.Regexp
 
 func main() {
@@ -61,7 +67,7 @@ func main() {
 
 	var buf bytes.Buffer
 	hostname, _ := os.Hostname()
-	err := tmpl.Execute(&buf, hostname)
+	err := tmpl.Execute(&buf, templateDate{hostname, runtime.Version()})
 	html := buf.String()
 
 	if nil != err {
