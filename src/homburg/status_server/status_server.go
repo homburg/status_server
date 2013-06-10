@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"homburg/status_server/res"
+	"github.com/eknkc/amber"
 	"html/template"
 	"log"
 	"net/http"
@@ -50,29 +51,40 @@ func commandToHtml(cmds []string) (string, error) {
 	return outStr, nil
 }
 
-type templateDate struct {
+type templateData struct {
 	Hostname  string
 	GoVersion string
+	Script template.JS
 }
 
 var dropboxCommandMatch *regexp.Regexp
 
-func main() {
-	// Dropbox handler dependencies
-	dropboxCommandMatch = regexp.MustCompile("/dropbox/(.*)")
-	dropboxAllowedCommands := []string{"status", "help", "start"}
+func getTemplate () *template.Template {
+	// template.Must(tmpl.Parse(status_server.ServerTemplate))
+	// Amber template compiler
+	compiler := amber.New()
+	compiler.Options.PrettyPrint = false
+	compiler.Options.LineNumbers = false
 
-	tmpl := template.New("server")
-	template.Must(tmpl.Parse(status_server.ServerTemplate))
-
-	var buf bytes.Buffer
-	hostname, _ := os.Hostname()
-	err := tmpl.Execute(&buf, templateDate{hostname, runtime.Version()})
-	html := buf.String()
+	// err := compiler.Parse(status_server.ServerTemplateAmber)
+	err := compiler.Parse(status_server.ServerTemplateAmber)
 
 	if nil != err {
 		log.Println(err)
 	}
+
+	return template.Must(compiler.Compile())
+}
+
+func main() {
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
+	// Dropbox handler dependencies
+	dropboxCommandMatch = regexp.MustCompile("/dropbox/(.*)")
+	dropboxAllowedCommands := []string{"status", "help", "start"}
+
+
+	hostname, _ := os.Hostname()
+	tData := templateData{hostname, runtime.Version(), status_server.ServerTemplateScript}
 
 	log.Println("Started")
 
@@ -162,7 +174,19 @@ func main() {
 		}
 	})
 
+	// Setup template for main layout
+	var buf bytes.Buffer
+
+	tmpl := getTemplate()
+	err := tmpl.Execute(&buf, tData)
+	html := buf.String()
+
+	if nil != err {
+		log.Println(err)
+	}
+
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
 
 		if "/" != r.URL.String() {
 			w.WriteHeader(http.StatusNotFound)

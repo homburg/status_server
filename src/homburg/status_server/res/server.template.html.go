@@ -1,32 +1,33 @@
 package status_server
 
-const ServerTemplate = `<!DOCTYPE HTML>
-<html lang="en">
-<head>
-	<meta charset="UTF-8">
-	<title>Status page</title>
-	<style type="text/css">
+const ServerTemplateAmber = `doctype 5
+html[lang="en"]
+head
+	meta[charset="UTF-8"]
+	title Status page
+	style[type="text/css"]
 		div {
 			margin: 1em;
 		}
-	</style>
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
-	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
-</head>
-<body>
-	<div>
-		<h1>{{.Hostname}}</h1>
-		<p class="muted">{{.GoVersion}}</p>
-	</div>
+	script[type="text/javascript"][src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.1/jquery.min.js"]
+	link[href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css"][rel="stylesheet"]
+body
+	div
+		h1 #{Hostname}
+		p.muted #{GoVersion}
+	
+	div
+		h2 pigen.dk
+		form#server-sickbeard-restart
+			[method="POST"]
+		input.btn[type="submit"]
+			[value="Genstart SickBeard"]
 
-	<div>
-		<h2>pigen.dk</h2>
-		<form action="" method="post" id="server-sickbeard-restart">
-			<input type="submit" class="btn" value="Genstart SickBeard" />
-		</form>
-	</div>
+	script[type="text/javascript"]
+		#{Script}
+`
 
-	<script type="text/javascript">
+const ServerTemplateScript = `
 		var checks = {
 				dropbox: ["/dropbox/status", "dropbox status", 2000, "span6"],
 				landscapeSysinfo: ["/landscape/sysinfo", "landscape sysinfo", 2000, "span8"],
@@ -72,6 +73,4 @@ const ServerTemplate = `<!DOCTYPE HTML>
 			});
 
 			// setTimeout(function () {window.location.reload();}, 20000);
-	</script>
-</body>
-</html>`
+`
