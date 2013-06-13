@@ -3,8 +3,8 @@ package main
 import (
 	"bytes"
 	"fmt"
-	"homburg/status_server/res"
 	"github.com/eknkc/amber"
+	"homburg/status_server/res"
 	"html/template"
 	"log"
 	"net/http"
@@ -54,12 +54,12 @@ func commandToHtml(cmds []string) (string, error) {
 type templateData struct {
 	Hostname  string
 	GoVersion string
-	Script template.JS
+	Script    template.JS
 }
 
 var dropboxCommandMatch *regexp.Regexp
 
-func getTemplate () *template.Template {
+func getTemplate() *template.Template {
 	// template.Must(tmpl.Parse(status_server.ServerTemplate))
 	// Amber template compiler
 	compiler := amber.New()
@@ -81,7 +81,6 @@ func main() {
 	// Dropbox handler dependencies
 	dropboxCommandMatch = regexp.MustCompile("/dropbox/(.*)")
 	dropboxAllowedCommands := []string{"status", "help", "start"}
-
 
 	hostname, _ := os.Hostname()
 	tData := templateData{hostname, runtime.Version(), status_server.ServerTemplateScript}
@@ -186,7 +185,6 @@ func main() {
 	}
 
 	http.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-
 
 		if "/" != r.URL.String() {
 			w.WriteHeader(http.StatusNotFound)
