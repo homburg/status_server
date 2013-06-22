@@ -1,4 +1,4 @@
-package status_server
+package res
 
 const ServerTemplateAmber = `doctype 5
 html[lang="en"]

@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"github.com/eknkc/amber"
-	"homburg/status_server/res"
+	"github.com/homburg/status_server/res"
 	"html/template"
 	"log"
 	"net/http"
@@ -67,7 +67,7 @@ func getTemplate() *template.Template {
 	compiler.Options.LineNumbers = false
 
 	// err := compiler.Parse(status_server.ServerTemplateAmber)
-	err := compiler.Parse(status_server.ServerTemplateAmber)
+	err := compiler.Parse(res.ServerTemplateAmber)
 
 	if nil != err {
 		log.Println(err)
@@ -83,7 +83,7 @@ func main() {
 	dropboxAllowedCommands := []string{"status", "help", "start"}
 
 	hostname, _ := os.Hostname()
-	tData := templateData{hostname, runtime.Version(), status_server.ServerTemplateScript}
+	tData := templateData{hostname, runtime.Version(), res.ServerTemplateScript}
 
 	log.Println("Started")
 
