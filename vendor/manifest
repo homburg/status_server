@@ -1,0 +1,13 @@
+{
+	"version": 0,
+	"dependencies": [
+		{
+			"importpath": "github.com/eknkc/amber",
+			"repository": "https://github.com/eknkc/amber",
+			"vcs": "git",
+			"revision": "7875e9689d335cd15294cd6f4f0ef8322ce4c8e7",
+			"branch": "master",
+			"notests": true
+		}
+	]
+}
