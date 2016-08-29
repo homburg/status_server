@@ -1,4 +1,4 @@
-package res
+package main
 
 const ServerTemplateAmber = `doctype 5
 html[lang="en"]
